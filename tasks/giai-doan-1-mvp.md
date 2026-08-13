@@ -5,9 +5,10 @@ tại quầy (POS), hóa đơn điện tử. Bắt đầu thu thập dữ liệu
 AI ở giai đoạn sau.
 
 ## Hạ tầng / khung dự án
-- [ ] Scaffold `backend/` (ASP.NET Core Web API + PostgreSQL qua EF Core)
+- [x] Scaffold `backend/` (ASP.NET Core Web API, có Scalar UI để test API)
 - [ ] Scaffold `pos-app/` (Blazor WebAssembly, bật PWA)
-- [ ] Import `database/schema.sql` vào PostgreSQL local
+- [x] Database dùng Supabase (không phải local) — đã chạy `schema.sql` qua SQL Editor
+- [x] Backend nối được Supabase qua EF Core (Npgsql) — migration `InitialUsers` đã đồng bộ, entity `User`/`AuditLog` đã có
 - [ ] Tách project `Shared` dùng chung DTO giữa backend và pos-app
 - [ ] Setup CI cơ bản (bật lại job `backend` trong `.github/workflows/ci.yml`)
 

@@ -61,3 +61,107 @@ nhìn lại biết đã đi qua những gì, không phải nhớ lại từ đ�
 - **Xong:** hạ tầng backend (project chạy được, có UI test API, nối DB thật).
 - **Chưa làm:** scaffold `pos-app/`, project `Shared` dùng chung DTO, CI thật, và toàn bộ tính năng nghiệp vụ (đăng nhập, sản phẩm, kho, POS, hóa đơn điện tử) — vẫn là API rỗng.
 - **Việc tiếp theo:** chọn 1 trong 2 — làm đăng nhập/phân quyền (đã có sẵn entity `User`) hoặc làm sản phẩm & danh mục.
+
+---
+
+## Phụ lục — toàn bộ lệnh đã chạy trong ngày (tham khảo lại khi cần)
+
+### Git — commit theo từng nhóm việc
+```bash
+cd D:\HD_Farm
+
+git add docs/
+git commit -m "docs: add requirements doc, architecture decisions, screen flow notes"
+
+git add database/
+git commit -m "feat(database): add full PostgreSQL schema for phase 1-3"
+
+git add backend/ pos-app/ storefront/ .github/ .gitignore
+git commit -m "chore: scaffold project skeleton for backend/pos-app/storefront + CI"
+
+git add tasks/ WORKFLOW.md README.md
+git commit -m "docs: add workflow guide and phase checklists"
+```
+
+### Git — sự cố đã gặp và cách sửa
+```bash
+# Lỡ "git add ." rồi commit gộp hết vào 1 commit — sửa bằng cách bỏ commit,
+# giữ nguyên file, add/commit lại đúng từng nhóm:
+git reset HEAD~1
+
+# File .git/index.lock bị kẹt (do 2 tiến trình git đụng nhau) — xóa tay:
+del D:\HD_Farm\.git\index.lock
+```
+
+### Git — đổi sang repo mới (nếu cần)
+```bash
+git remote set-url origin https://github.com/<user>/<repo-moi>.git
+git push -u origin main
+```
+
+### Git — commit phần setup Supabase/Docker/secrets
+```bash
+git add WORKFLOW.md database/README.md docker-compose.yml backend/appsettings.Example.json storefront/.env.example
+git commit -m "docs: add Supabase/Docker db setup, secrets templates, workflow updates"
+```
+
+### Backend — scaffold ASP.NET Core Web API
+```bash
+cd D:\HD_Farm\backend
+dotnet new sln -n HdFarm
+mkdir src
+cd src
+dotnet new webapi -n HdFarm.Api --use-controllers
+cd ..
+dotnet sln add src/HdFarm.Api
+```
+
+### Backend — thêm package
+```bash
+cd src/HdFarm.Api
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Scalar.AspNetCore
+```
+
+### Backend — user-secrets (connection string Supabase, đúng định dạng Npgsql)
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:Default" "Host=aws-0-ap-northeast-1.pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.abdydmqgshdtjncmozcq;Password=<mat-khau-that>;SSL Mode=Require;Trust Server Certificate=true"
+```
+
+### Backend — chạy thử
+```bash
+dotnet run
+# Test API tại: http://localhost:5090/scalar/v1
+```
+
+### EF Core — migration đầu tiên
+```bash
+dotnet tool install --global dotnet-ef
+dotnet ef migrations add InitialUsers
+dotnet ef database update
+```
+
+### Supabase SQL Editor — đánh dấu migration đã áp dụng
+(dùng khi bảng đã tồn tại sẵn từ trước, không muốn EF tạo lại)
+```sql
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20260813052403_InitialUsers', '10.0.11');
+```
+
+### Backend — commit
+```bash
+cd D:\HD_Farm\backend
+git add .
+git commit -m "feat(backend): scaffold ASP.NET Core Web API, add Scalar UI, connect EF Core to Supabase"
+cd ..
+git add tasks/giai-doan-1-mvp.md
+git commit -m "docs: update phase 1 checklist — backend scaffolded and connected to Supabase"
+```

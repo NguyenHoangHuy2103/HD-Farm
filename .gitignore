@@ -1,0 +1,29 @@
+# ---- .NET (backend, pos-app) ----
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# ---- Node (storefront) ----
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env*.local
+npm-debug.log*
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Editor ----
+.vscode/
+.idea/
+
+# ---- Secrets ----
+appsettings.Development.json
+appsettings.*.local.json
+*.pfx
+*.key

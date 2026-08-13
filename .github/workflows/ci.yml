@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    if: false # bật lại khi backend/ đã có project .NET thật
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - run: dotnet restore
+      - run: dotnet build --no-restore
+      - run: dotnet test --no-build
+
+  storefront:
+    if: false # bật lại khi storefront/ đã có project Next.js thật
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: storefront
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+# Ghi chú: 2 job trên đang tắt (if: false) vì backend/ và storefront/ mới
+# chỉ có README, chưa có project thật. Xóa dòng "if: false" tương ứng khi
+# đã dotnet new / npx create-next-app xong.

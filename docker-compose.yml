@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: hdfarm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hdfarm
+      POSTGRES_USER: hdfarm
+      POSTGRES_PASSWORD: hdfarm_local_only
+    ports:
+      - "5432:5432"
+    volumes:
+      - hdfarm_pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+
+volumes:
+  hdfarm_pgdata:

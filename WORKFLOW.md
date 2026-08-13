@@ -54,15 +54,20 @@ nhìn trên board.
 ## 4. Nhánh & commit
 
 - `main`: luôn phải chạy được, chỉ nhận thay đổi qua Pull Request, không
-  commit thẳng.
+  commit thẳng. **Bắt buộc bật branch protection** (xem mục 8) để GitHub
+  tự chặn push thẳng, không dựa vào tự giác.
 - Nhánh feature đặt tên: `feature/<module>-<mo-ta-ngan>`, ví dụ
   `feature/backend-dang-nhap`, `feature/pos-app-tao-don-hang`.
-- Commit message theo Conventional Commits:
+- Commit message theo Conventional Commits, mỗi commit chỉ nên gộp 1 nhóm
+  việc liên quan (không `git add .` rồi commit hết mọi thứ cùng lúc):
   - `feat: ...` — thêm tính năng
   - `fix: ...` — sửa lỗi
   - `docs: ...` — sửa tài liệu
-  - `chore: ...` — việc vặt (setup, dependency)
+  - `chore: ...` — việc vặt (setup, dependency, CI)
   - `refactor: ...` — sửa cấu trúc code, không đổi hành vi
+  - `test: ...` — thêm/sửa test
+- Có thể viết tiếng Việt hoặc tiếng Anh sau dấu `:`, miễn nhất quán trong
+  cùng 1 PR. Ví dụ: `feat(backend): add login endpoint`.
 
 ## 5. Quy trình 1 vòng làm việc (từ task tới xong)
 
@@ -96,3 +101,47 @@ nhìn trên board.
   vướng gì), dọn Project board (đóng issue đã xong, dời issue trễ hẹn).
 - Hết 1 giai đoạn: review lại toàn bộ checklist trong file giai đoạn đó,
   đảm bảo tick hết trước khi mở milestone kế tiếp.
+
+## 8. Branch protection (chưa bật — làm sau khi có nhiều người cùng code)
+
+Tạm thời chưa cần, vì đang làm 1 mình nên tự giác theo quy tắc "không
+commit thẳng vào main" ở mục 4 là đủ. Bật lại khi nào có thêm người cùng
+làm, hoặc thấy hay lỡ tay push thẳng. Cách bật:
+
+Vào repo → **Settings → Branches → Add branch protection rule** →
+áp dụng cho nhánh `main`:
+- Tick **"Require a pull request before merging"** — chặn push thẳng.
+- Tick **"Require status checks to pass before merging"** sau khi CI đã
+  bật thật (mục 6 file backend/README.md) — chặn merge code không build
+  được.
+
+## 9. Quản lý secrets / biến môi trường
+
+- Không commit connection string, API key (thanh toán, hóa đơn điện tử,
+  AI) vào repo — các file này đã nằm trong `.gitignore`
+  (`appsettings.Development.json`, `.env`, `.env.local`).
+- Mỗi project (`backend/`, `pos-app/`, `storefront/`) nên có file mẫu
+  **không chứa giá trị thật** để biết cần khai báo biến gì, ví dụ
+  `backend/appsettings.Example.json`, `storefront/.env.example` — các
+  file `.example` này ĐƯỢC commit bình thường, chỉ file thật (không có
+  đuôi `.example`) mới bị ignore.
+- Khi deploy thật, secrets nằm trong GitHub Actions Secrets (Settings →
+  Secrets and variables → Actions) hoặc biến môi trường trên server/cloud,
+  không nằm trong code.
+
+## 10. Database — Supabase
+
+Dùng chung 1 project **Supabase** (PostgreSQL managed) thay vì mỗi máy tự
+cài/host riêng — mọi người luôn thấy cùng 1 dữ liệu, khỏi lệch schema
+giữa các máy. Chi tiết setup + connection string: `database/README.md`.
+Có phương án Docker local dự phòng (`docker-compose.yml`) nếu cần môi
+trường tách biệt offline, nhưng không phải lựa chọn chính.
+
+## 11. Thông báo Discord
+
+Repo đã gắn webhook GitHub → Discord (kênh thông báo chung), nhận sự
+kiện: Issues, Pull requests, Pushes. Không cần check GitHub liên tục,
+theo dõi qua Discord là đủ cho nhịp làm việc hàng ngày. Một số action
+phụ (như "gắn label", có thể cả "edited") sẽ không hiện tin nhắn dù
+GitHub gửi thành công (204) — đây là giới hạn của Discord, không phải
+lỗi cấu hình, không cần xử lý gì thêm.

@@ -6,7 +6,7 @@ AI ở giai đoạn sau.
 
 ## Hạ tầng / khung dự án
 - [x] Scaffold `backend/` (ASP.NET Core Web API, có Scalar UI để test API)
-- [ ] Scaffold `pos-app/` (Blazor WebAssembly, bật PWA)
+- [x] Scaffold `pos-app/` (Blazor WebAssembly, bật PWA)
 - [x] Database dùng Supabase (không phải local) — đã chạy `schema.sql` qua SQL Editor
 - [x] Backend nối được Supabase qua EF Core (Npgsql) — migration `InitialUsers` đã đồng bộ, entity `User`/`AuditLog` đã có
 - [ ] Tách project `Shared` dùng chung DTO giữa backend và pos-app
